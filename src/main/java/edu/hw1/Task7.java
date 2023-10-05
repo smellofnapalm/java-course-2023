@@ -5,7 +5,8 @@ import java.util.Vector;
 
 public class Task7 {
 
-    public static int[] intToBits(int n) {
+    public static int[] intToBits(int x) {
+        int n = x;
         var a = new Vector<Integer>();
         do {
             a.add(n % 2);
@@ -41,8 +42,8 @@ public class Task7 {
         }
         var a = intToBits(n);
         // Чтобы shift всегда был в [0, length-1]
-        shift = (shift % a.length + a.length) % a.length;
-        a = shiftLeft(a, shift);
+        var shiftNew = (shift % a.length + a.length) % a.length;
+        a = shiftLeft(a, shiftNew);
         return bitsToInt(a);
     }
 
@@ -53,9 +54,12 @@ public class Task7 {
         }
         var a = intToBits(n);
         // Чтобы shift всегда был в [0, length-1]
-        shift = (shift % a.length + a.length) % a.length;
+        var shiftNew = (shift % a.length + a.length) % a.length;
         // Сдвиг вправо на shift = сдвиг влево на длину числа в битах - shift
-        a = shiftLeft(a, a.length - shift);
+        a = shiftLeft(a, a.length - shiftNew);
         return bitsToInt(a);
+    }
+
+    private Task7() {
     }
 }

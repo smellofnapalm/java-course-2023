@@ -60,6 +60,7 @@ public class Task6Test {
         assertThat(k)
             .isEqualTo(-1);
     }
+
     @Test
     @DisplayName("Число с одинаковыми цифрами")
     void countK5() {

@@ -14,4 +14,7 @@ public class Task4 {
         }
         return sb.toString();
     }
+
+    private Task4() {
+    }
 }

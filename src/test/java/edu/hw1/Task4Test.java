@@ -46,6 +46,7 @@ public class Task4Test {
         assertThat(ans)
             .isEqualTo("");
     }
+
     @Test
     @DisplayName("Тест с одним символом")
     void countDigits4() {

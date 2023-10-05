@@ -18,4 +18,7 @@ public class Task3 {
         long max2 = Arrays.stream(arr2).max().getAsLong();
         return min1 > min2 && max1 < max2;
     }
+
+    private Task3() {
+    }
 }

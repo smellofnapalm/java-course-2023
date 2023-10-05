@@ -5,12 +5,16 @@ import static java.lang.Math.abs;
 public class Task2 {
     public static int countDigits(long num) {
         // Будем считать даже в случае отрицательного числа
-        num = abs(num);
+        long x = abs(num);
         int ans = 0;
+        final long base = 10L;
         do {
             ans++;
-            num /= 10L;
-        } while(num > 0);
+            x /= base;
+        } while (x > 0);
         return ans;
+    }
+
+    private Task2() {
     }
 }

@@ -3,6 +3,7 @@ package edu.hw1;
 public class Task1 {
     public static long minutesToSeconds(String time) {
         String[] parts = time.split(":");
+        final int secInMin = 60;
         // Некорректно задана строка
         if (parts.length != 2) {
             return -1;
@@ -10,9 +11,12 @@ public class Task1 {
         var minutes = Long.parseLong(parts[0]);
         var seconds = Long.parseLong(parts[1]);
         // Некорректное число секунд или минут
-        if (seconds < 0 || seconds > 60 || minutes < 0) {
+        if (seconds < 0 || seconds > secInMin || minutes < 0) {
             return -1;
         }
-        return minutes*60 + seconds;
+        return minutes * secInMin + seconds;
+    }
+
+    private Task1() {
     }
 }
