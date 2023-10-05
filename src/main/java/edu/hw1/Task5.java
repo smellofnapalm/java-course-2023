@@ -2,7 +2,7 @@ package edu.hw1;
 
 import static java.lang.Math.abs;
 
-public class Task5 {
+public final class Task5 {
     public static boolean isPalindrome(long x) {
         var s = Long.toString(x);
         // Палиндромом считается только число, у которого >= 2 цифр

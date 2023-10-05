@@ -1,6 +1,6 @@
 package edu.hw1;
 
-public class Task4 {
+public final class Task4 {
     public static String fixString(String s) {
         if (s == null) {
             return null;

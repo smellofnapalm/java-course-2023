@@ -3,7 +3,7 @@ package edu.hw1;
 import java.util.Collections;
 import java.util.Vector;
 
-public class Task7 {
+public final class Task7 {
 
     public static int[] intToBits(int x) {
         int n = x;

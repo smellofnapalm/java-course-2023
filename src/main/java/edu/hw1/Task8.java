@@ -3,7 +3,7 @@ package edu.hw1;
 import java.util.Vector;
 import org.apache.commons.lang3.tuple.Pair;
 
-public class Task8 {
+public final class Task8 {
     @SuppressWarnings("MagicNumber")
     public static boolean knightBoardCapture(int[][] a) {
         // Если ни один конь не расставлен, то, действительно, они не бьют друг друга

@@ -2,7 +2,7 @@ package edu.hw1;
 
 import java.util.Arrays;
 
-public class Task3 {
+public final class Task3 {
     public static boolean isNestable(long[] arr1, long[] arr2) {
         // Будем считать, что пустой массив можно вложить в любой (даже пустой)
         // Если первый не пустой, а второй пустой, то возвращаем false

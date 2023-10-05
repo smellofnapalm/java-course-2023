@@ -3,7 +3,7 @@ package edu.hw1;
 import java.util.Arrays;
 import static java.lang.Math.abs;
 
-public class Task6 {
+public final class Task6 {
     public static int fromArray(int[] a) {
         int ten = 1;
         int n = a.length;
@@ -20,8 +20,9 @@ public class Task6 {
         final int base = 10;
         final int sz = 4;
         // Создадим массив из 4 цифр
-        var a = new int[] {n / (base * base * base), (n % (base * base * base)) / (base * base), (n % (base * base)) / base,
-            n % base};
+        var a = new int[] {n / (base * base * base),
+            (n % (base * base * base)) / (base * base),
+            (n % (base * base)) / base, n % base};
         Arrays.sort(a);
         int asc = fromArray(a);
         // Развернем массив (сортировка в обратном порядке)
