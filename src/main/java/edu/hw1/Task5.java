@@ -3,42 +3,43 @@ package edu.hw1;
 import static java.lang.Math.abs;
 
 public final class Task5 {
-    public static boolean isPalindrome(long x) {
-        var s = Long.toString(x);
+    public static boolean isPalindrome(String x) {
         // Палиндромом считается только число, у которого >= 2 цифр
-        if (s.length() < 2) {
+        if (x.length() < 2) {
             return false;
         }
 
-        int n = s.length();
-        for (int i = 0; i < s.length() / 2; i++) {
-            if (s.charAt(i) != s.charAt(n - 1 - i)) {
+        int n = x.length();
+        for (int i = 0; i < x.length() / 2; i++) {
+            if (x.charAt(i) != x.charAt(n - 1 - i)) {
                 return false;
             }
         }
         return true;
     }
 
-    public static long makeStep(long x) {
-        var s = Long.toString(x);
-        long ans = 0;
-        for (int i = 0; i < s.length() - 1; i += 2) {
-            ans += (s.charAt(i) - '0') + (s.charAt(i + 1) - '0');
+    public static String makeStep(String x) {
+        StringBuilder ans = new StringBuilder();
+        for (int i = 0; i < x.length() - 1; i += 2) {
+            ans.append((x.charAt(i) - '0') + (x.charAt(i + 1) - '0'));
         }
-        return ans;
+        return ans.toString();
     }
 
     public static boolean isPalindromeDescendant(long num) {
         // Будем считать, что, например, -121 -- палиндром
         // Т.е. если число отрицательное, то работать с его модулем
-        var x = abs(num);
+        String x = Long.toString(abs(num));
         // Если задано число нечетной длины, то применять операцию к нему некорректно,
         // поэтому проверим только само число на палиндромность
-        if (Long.toString(x).length() % 2 == 1) {
+        if (x.length() % 2 == 1) {
             return isPalindrome(x);
         }
 
-        while (Long.toString(x).length() >= 2) {
+        while (x.length() >= 2) {
+            if (x.length() % 2 == 1) {
+                return isPalindrome(x);
+            }
             if (isPalindrome(x)) {
                 return true;
             }

@@ -102,4 +102,21 @@ public class Task6Test {
         assertThat(k)
             .isEqualTo(5);
     }
+
+    @Test
+    @DisplayName("Тест c 7-ью итерациями: 6175 -> 6084 -> 8180 -> 8622 -> 6354 -> 3087 -> 8352 -> 6174")
+    void countK8() {
+        // given
+        int x = 6175;
+
+        // when
+        int k = Task6.countK(x);
+        int next = Task6.kaprekar(x);
+
+        // then
+        assertThat(k)
+            .isEqualTo(7);
+        assertThat(next)
+            .isEqualTo(6084);
+    }
 }

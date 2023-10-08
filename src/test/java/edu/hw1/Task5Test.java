@@ -74,4 +74,21 @@ public class Task5Test {
         assertThat(pal)
             .isEqualTo(false);
     }
+
+    @Test
+    @DisplayName("Тест 9999 -> 1818 -> 99")
+    void isPalindromeDescent6() {
+        // given
+        long x = 9999L;
+
+        // when
+        boolean pal = Task5.isPalindromeDescendant(x);
+        String next = Task5.makeStep(String.valueOf(x));
+
+        // then
+        assertThat(pal)
+            .isEqualTo(true);
+        assertThat(next)
+            .isEqualTo("1818");
+    }
 }
