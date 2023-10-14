@@ -1,9 +1,7 @@
 package edu.hw1;
 
-import static java.lang.Math.abs;
-
 public final class Task5 {
-    public static boolean isPalindrome(String x) {
+    private static boolean isPalindrome(String x) {
         // Палиндромом считается только число, у которого >= 2 цифр
         if (x.length() < 2) {
             return false;
@@ -18,7 +16,7 @@ public final class Task5 {
         return true;
     }
 
-    public static String makeStep(String x) {
+    static String makeStep(String x) {
         StringBuilder ans = new StringBuilder();
         for (int i = 0; i < x.length() - 1; i += 2) {
             ans.append((x.charAt(i) - '0') + (x.charAt(i + 1) - '0'));
@@ -26,10 +24,14 @@ public final class Task5 {
         return ans.toString();
     }
 
-    public static boolean isPalindromeDescendant(long num) {
-        // Будем считать, что, например, -121 -- палиндром
-        // Т.е. если число отрицательное, то работать с его модулем
-        String x = Long.toString(abs(num));
+    public static boolean isPalindromeDescendant(long num) throws IllegalArgumentException {
+        // Не будем работать с отрицательными числами
+        // Если бы брали модуль, то возникла бы проблема с тем,
+        // Что abs(Long.MinValue) -> Long.MinValue < 0
+        if (num < 0) {
+            throw new IllegalArgumentException("Аргумент должен быть >= 0");
+        }
+        String x = Long.toString(num);
         // Если задано число нечетной длины, то применять операцию к нему некорректно,
         // поэтому проверим только само число на палиндромность
         if (x.length() % 2 == 1) {

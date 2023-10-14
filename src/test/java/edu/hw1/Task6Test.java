@@ -111,7 +111,7 @@ public class Task6Test {
 
         // when
         int k = Task6.countK(x);
-        int next = Task6.kaprekar(x);
+        int next = Task6.getKaprekar(x);
 
         // then
         assertThat(k)

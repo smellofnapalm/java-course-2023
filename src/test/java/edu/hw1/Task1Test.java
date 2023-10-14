@@ -61,4 +61,18 @@ public class Task1Test {
         assertThat(sec)
             .isEqualTo(-1);
     }
+
+    @Test
+    @DisplayName("Тест на 60 секунд")
+    void minutesToSecondsTest5() {
+        // given
+        String s = "213:60";
+
+        // when
+        long sec = Task1.minutesToSeconds(s);
+
+        // then
+        assertThat(sec)
+            .isEqualTo(-1);
+    }
 }

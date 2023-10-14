@@ -16,7 +16,7 @@ public final class Task6 {
         return res;
     }
 
-    public static int kaprekar(int n) {
+    public static int getKaprekar(int n) {
         final int base = 10;
         final int sz = 4;
         // Создадим массив из 4 цифр
@@ -41,16 +41,24 @@ public final class Task6 {
         final int lowerBound = 1000;
         final int upperBound = 10000;
         final int digitsEqual = 1111;
-        int n = x;
-        if (n <= lowerBound || n >= upperBound || n % digitsEqual == 0) {
+        if (x == stablePoint) {
+            return 0;
+        }
+        if (x <= lowerBound || x >= upperBound || x % digitsEqual == 0) {
             return -1;
         }
-        int ans = 0;
-        while (n != stablePoint) {
-            n = kaprekar(n);
-            ans++;
+        // Здесь нужна отдельная рекурсивная функция,
+        // Так как условие x <= lowerBound может нарушиться,
+        // Например, 9998 - 8999 = 0999
+        return countKRecursion(getKaprekar(x)) + 1;
+    }
+
+    private static int countKRecursion(int x) {
+        final int stablePoint = 6174;
+        if (x == stablePoint) {
+            return 0;
         }
-        return ans;
+        return countKRecursion(getKaprekar(x)) + 1;
     }
 
     private Task6() {

@@ -2,7 +2,9 @@ package edu.hw1;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static java.lang.Math.abs;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Task5Test {
     @Test
@@ -62,17 +64,22 @@ public class Task5Test {
     }
 
     @Test
-    @DisplayName("Тест с отрицательным не палиндромом")
+    @DisplayName("Тест с отрицательным числом")
     void isPalindromeDescent5() {
-        // given
-        long x = -1213L;
+        IllegalArgumentException thrown = assertThrows(
+            IllegalArgumentException.class,
+            () -> {
+                // given
+                long x = -1213L;
 
-        // when
-        boolean pal = Task5.isPalindromeDescendant(x);
+                // when
+                boolean pal = Task5.isPalindromeDescendant(x);
+            }
+        );
 
         // then
-        assertThat(pal)
-            .isEqualTo(false);
+        assertThat(thrown.getMessage())
+            .isEqualTo("Аргумент должен быть >= 0");
     }
 
     @Test
@@ -90,5 +97,19 @@ public class Task5Test {
             .isEqualTo(true);
         assertThat(next)
             .isEqualTo("1818");
+    }
+
+    @Test
+    @DisplayName("Тест с нулем")
+    void isPalindromeDescent7() {
+        // given
+        long x = 0L;
+
+        // when
+        boolean pal = Task5.isPalindromeDescendant(x);
+
+        // then
+        assertThat(pal)
+            .isEqualTo(false);
     }
 }
