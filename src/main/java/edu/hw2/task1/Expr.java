@@ -1,6 +1,5 @@
-package edu.hw2;
+package edu.hw2.task1;
 
-import static java.lang.Math.exp;
 import static java.lang.Math.pow;
 
 public sealed interface Expr {
@@ -50,6 +49,7 @@ public sealed interface Expr {
         public double evaluate() {
             return add1.evaluate() + add2.evaluate();
         }
+
         public String toString() {
             return Double.toString(add1.evaluate()) + " + "
                 + Double.toString(add2.evaluate());
@@ -61,6 +61,7 @@ public sealed interface Expr {
         public double evaluate() {
             return mul1.evaluate() * mul2.evaluate();
         }
+
         public String toString() {
             return Double.toString(mul1.evaluate()) + " * "
                 + Double.toString(mul2.evaluate());

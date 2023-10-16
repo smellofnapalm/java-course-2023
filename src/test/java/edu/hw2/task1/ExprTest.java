@@ -1,5 +1,6 @@
-package edu.hw2;
+package edu.hw2.task1;
 
+import edu.hw2.task1.Expr;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

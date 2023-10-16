@@ -1,4 +1,4 @@
-package edu.hw2;
+package edu.hw2.task2;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -16,9 +16,10 @@ public class RectangleTest {
     @ParameterizedTest
     @MethodSource("rectangles")
     void rectangleArea(Rectangle rect) {
-        rect.setWidth(20);
-        rect.setHeight(10);
+        var reassignedRect = rect;
+        reassignedRect = reassignedRect.setWidth(20);
+        reassignedRect = reassignedRect.setHeight(10);
 
-        assertThat(rect.area()).isEqualTo(200.0);
+        assertThat(reassignedRect.area()).isEqualTo(200.0);
     }
 }
