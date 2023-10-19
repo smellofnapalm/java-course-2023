@@ -3,6 +3,7 @@ package edu.hw3.task7;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import java.util.Comparator;
+import java.util.TreeMap;
 import static edu.hw3.task7.NullComparator.getNullComparator;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -37,5 +38,17 @@ public class NullComparatorTest {
         assertThat(s1).usingComparator(nullComparator).isGreaterThan(nullStr);
         assertThat(nullComparator.compare(nullStr, s2)).isLessThan(0);
         assertThat(s1).usingComparator(nullComparator).isLessThan(s2);
+    }
+
+    @Test
+    @DisplayName("Тест компаратора в TreeMap")
+    void nullComparatorTest3() {
+        Comparator<String> cmp = Comparator.comparing(String::toString);
+        Comparator<String> nullComparator = getNullComparator(cmp);
+        TreeMap<String, String> tree = new TreeMap<>(nullComparator);
+
+        tree.put(null, "test");
+
+        assertThat(tree.containsKey(null)).isTrue();
     }
 }
