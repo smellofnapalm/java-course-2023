@@ -3,9 +3,10 @@ package edu.hw3.task6;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
-public class PriorityStockMarket implements StockMarket{
-    static private final Comparator<Stock> cmp = Comparator.comparing(Stock::getValue).reversed();
-    private final PriorityQueue<Stock> priorityQueue = new PriorityQueue<>(cmp);
+public class PriorityStockMarket implements StockMarket {
+    static private final Comparator<Stock> COMPARATOR = Comparator.comparing(Stock::getValue).reversed();
+    private final PriorityQueue<Stock> priorityQueue = new PriorityQueue<>(COMPARATOR);
+
     @Override
     public void add(Stock stock) {
         priorityQueue.add(stock);

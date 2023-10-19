@@ -2,7 +2,9 @@ package edu.hw3.task7;
 
 import java.util.Comparator;
 
-public class NullComparator {
+public final class NullComparator {
+    private NullComparator() {
+    }
 
     public static <T> Comparator<T> getNullComparator(Comparator<T> cmp) {
         Comparator<T> nullComparator = (o1, o2) -> {

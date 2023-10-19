@@ -6,8 +6,8 @@ public class Stock {
 
     Stock(double value, String companyName) {
         if (value < 0 || companyName == null) {
-            throw new IllegalArgumentException("Стоимость акции не может " +
-                "быть отрицательна, название компании должно быть валидным");
+            throw new IllegalArgumentException("Стоимость акции не может "
+                + "быть отрицательна, название компании должно быть валидным");
         }
         this.companyName = companyName;
         this.value = value;
