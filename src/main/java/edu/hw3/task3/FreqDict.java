@@ -3,8 +3,8 @@ package edu.hw3.task3;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class WordLen {
-    public static <T> Map<T, Integer> wordLen(T[] arr) {
+public final class FreqDict {
+    public static <T> Map<T, Integer> freqDict(T[] arr) {
         var dict = new HashMap<T, Integer>();
         if (arr == null) {
             return dict;
@@ -19,6 +19,6 @@ public final class WordLen {
         return dict;
     }
 
-    private WordLen() {
+    private FreqDict() {
     }
 }
