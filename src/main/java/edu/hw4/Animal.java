@@ -18,11 +18,14 @@ public record Animal(
     }
 
     public int paws() {
+        final int catPaws = 4;
+        final int spiderPaws = 8;
+        final int birdPaws = 2;
         return switch (type) {
-            case CAT, DOG -> 4;
-            case BIRD -> 2;
+            case CAT, DOG -> catPaws;
+            case BIRD -> birdPaws;
             case FISH -> 0;
-            case SPIDER -> 8;
+            case SPIDER -> spiderPaws;
         };
     }
 }
