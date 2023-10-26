@@ -6,4 +6,7 @@ public class Main {
         Hangman game = new Hangman(wrongAttemptsAllowed);
         game.run();
     }
+
+    private Main() {
+    }
 }
