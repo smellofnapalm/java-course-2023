@@ -11,11 +11,12 @@ import static java.util.Comparator.comparingLong;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.maxBy;
+import static java.util.stream.Collectors.summingInt;
 import static java.util.stream.Collectors.toMap;
 
 public final class AnimalUtils {
     static List<Animal> sortByHeight(List<Animal> list) {
-        if (list == null) {
+        if (list == null || list.isEmpty()) {
             throw new IllegalArgumentException(EMPTY_OR_NULL_STR_MESSAGE);
         }
         Comparator<Animal> cmp = comparing(Animal::height);
@@ -23,7 +24,7 @@ public final class AnimalUtils {
     }
 
     static List<Animal> getFirstKByWeight(List<Animal> list, int k) {
-        if (list == null) {
+        if (list == null || list.isEmpty()) {
             throw new IllegalArgumentException(EMPTY_OR_NULL_STR_MESSAGE);
         }
         int newK = Math.max(0, k);
@@ -32,7 +33,7 @@ public final class AnimalUtils {
     }
 
     static Map<Animal.Type, Long> countTypesOfAnimals(List<Animal> list) {
-        if (list == null) {
+        if (list == null || list.isEmpty()) {
             throw new IllegalArgumentException(EMPTY_OR_NULL_STR_MESSAGE);
         }
         return list.stream()
@@ -130,11 +131,13 @@ public final class AnimalUtils {
         return !list.stream().filter(a -> a.type() == Animal.Type.DOG && a.height() > k).toList().isEmpty();
     }
 
-    static Integer calcTotalAgeOfAnimalsBetween(List<Animal> list, int k, int l) {
+    static Map<Animal.Type, Integer> calcTotalAgeOfAnimalsBetween(List<Animal> list, int k, int l) {
         if (list == null || list.isEmpty()) {
             throw new IllegalArgumentException(EMPTY_OR_NULL_STR_MESSAGE);
         }
-        return list.stream().filter(x -> x.age() >= k && x.age() <= l).mapToInt(Animal::weight).sum();
+        return list.stream()
+            .filter(x -> x.age() >= k && x.age() <= l)
+            .collect(groupingBy(Animal::type, summingInt(Animal::weight)));
     }
 
     static List<Animal> sortByTypeAgeName(List<Animal> list) {
@@ -193,7 +196,7 @@ public final class AnimalUtils {
             throw new IllegalArgumentException("Животное не может быть null!");
         }
         Set<ValidationError> errors = new HashSet<>();
-        if (a.name() == null || !a.name().matches("[a-zA-Z]+")) {
+        if (a.name() == null || !a.name().matches("[a-zA-Za-яA-Я ]+")) {
             errors.add(new ValidationError("name"));
         }
         if (a.type() == null) {
