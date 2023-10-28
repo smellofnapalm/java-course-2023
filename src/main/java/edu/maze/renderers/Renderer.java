@@ -1,5 +1,7 @@
-package edu.maze;
+package edu.maze.renderers;
 
+import edu.maze.Coordinate;
+import edu.maze.Maze;
 import java.util.List;
 
 public interface Renderer {

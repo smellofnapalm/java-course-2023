@@ -1,5 +1,7 @@
-package edu.maze;
+package edu.maze.generators;
 
+import edu.maze.Cell;
+import edu.maze.Maze;
 import java.util.HashMap;
 import java.util.random.RandomGenerator;
 

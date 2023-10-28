@@ -1,31 +1,31 @@
 package edu.maze;
 
 public final class Cell {
-    final int row;
-    final int col;
+    public final int row;
+    public final int col;
     private boolean rightWall;
     private boolean downWall;
 
-    Cell(int row, int col, boolean rightWall, boolean downWall) {
+    public Cell(int row, int col, boolean rightWall, boolean downWall) {
         this.row = row;
         this.col = col;
         this.rightWall = rightWall;
         this.downWall = downWall;
     }
 
-    void setRightWall(boolean flag) {
+    public void setRightWall(boolean flag) {
         this.rightWall = flag;
     }
 
-    void setDownWall(boolean flag) {
+    public void setDownWall(boolean flag) {
         this.downWall = flag;
     }
 
-    boolean getDownWall() {
+    public boolean getDownWall() {
         return downWall;
     }
 
-    boolean getRightWall() {
+    public boolean getRightWall() {
         return rightWall;
     }
 

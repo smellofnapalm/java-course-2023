@@ -1,9 +1,12 @@
-package edu.maze;
+package edu.maze.renderers;
 
+import edu.maze.Cell;
+import edu.maze.Coordinate;
+import edu.maze.Maze;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConsoleRenderer implements Renderer {
+public class ASCIIRenderer implements Renderer {
     @Override
     public String render(Maze maze) {
         return render(maze, new ArrayList<>());

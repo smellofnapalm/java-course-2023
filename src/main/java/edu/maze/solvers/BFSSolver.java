@@ -1,5 +1,8 @@
-package edu.maze;
+package edu.maze.solvers;
 
+import edu.maze.Cell;
+import edu.maze.Coordinate;
+import edu.maze.Maze;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;

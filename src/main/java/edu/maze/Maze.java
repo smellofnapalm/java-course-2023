@@ -1,8 +1,8 @@
 package edu.maze;
 
 public final class Maze {
-    final int height;
-    final int width;
+    public final int height;
+    public final int width;
     private final Cell[][] grid;
 
     public Maze(int height, int width, Cell[][] grid) {
