@@ -4,7 +4,6 @@ import edu.maze.Cell;
 import edu.maze.Coordinate;
 import edu.maze.Maze;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -51,9 +50,12 @@ public class DFSSolver implements Solver {
         if (v.equals(end)) {
             return;
         }
-        List<Coordinate> coordinates = Arrays.stream(SHIFTS)
-            .map(shift -> new Coordinate(i + shift[0], j + shift[1]))
-            .toList();
+        List<Coordinate> coordinates = List.of(
+            new Coordinate(i + 1, j),
+            new Coordinate(i, j + 1),
+            new Coordinate(i - 1, j),
+            new Coordinate(i, j - 1)
+        );
         Cell cell = maze.getCell(v);
         boolean[] shiftFlags = {
             !cell.getDownWall(),
@@ -61,14 +63,12 @@ public class DFSSolver implements Solver {
             i > 0 && !maze.getCell(i - 1, j).getDownWall(),
             j > 0 && !maze.getCell(i, j - 1).getRightWall()
         };
-        for (int t = 0; t < SHIFTS.length; t++) {
+        for (int t = 0; t < coordinates.size(); t++) {
             var u = coordinates.get(t);
             if (maze.coordinateIsValid(u) && !used.contains(u) && shiftFlags[t]) {
                 dfs(u, v, end, used, parents, maze);
             }
         }
     }
-
-    static final int[][] SHIFTS = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 
 }

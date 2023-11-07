@@ -25,7 +25,6 @@ public class MazeTest {
         var gen = new EllerGenerator(probability);
         var maze = gen.generate(height, width);
         var path = new BFSSolver().solve(maze, new Coordinate(0, 0), new Coordinate(0, 0));
-        System.out.println(new ASCIIRenderer().render(maze, path));
 
         assertThat(path.size()).isEqualTo(1);
         assertThat(new Coordinate(0, 0)).isIn(path);
@@ -41,9 +40,12 @@ public class MazeTest {
         var gen = new EllerGenerator(probability);
         var maze = gen.generate(height, width);
 
-        var path = new DFSSolver().solve(maze, new Coordinate(0, 0), new Coordinate(height - 1, width - 1));
+        Coordinate start = new Coordinate(0,0);
+        Coordinate end = new Coordinate(height-1, width-1);
+        var path = new DFSSolver().solve(maze, start, end);
 
-        System.out.println(new ASCIIRenderer().render(maze, path));
+        assertThat(path).asList().contains(start);
+        assertThat(path).asList().contains(end);
     }
 
     @Test

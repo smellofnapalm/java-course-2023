@@ -18,12 +18,10 @@ public class BFSSolver implements Solver {
             throw new IllegalArgumentException("Координаты start или end не принадлежат лабиринту (или лабиринт null)");
         }
 
-        Queue<Cell> q = new ArrayDeque<>();
         int[][] dist = new int[maze.height][maze.width];
         Map<Cell, Cell> parent = new HashMap<>();
-        int[][] shifts = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 
-        bfs(maze, start, end, q, dist, parent, shifts);
+        bfs(maze, start, end, dist, parent);
 
         if ((start.col() != end.col() || start.row() != end.row()) && dist[end.row()][end.col()] == 0) {
             throw new IllegalArgumentException("Не существует пути от start до end!");
@@ -42,9 +40,11 @@ public class BFSSolver implements Solver {
     }
 
     private static void bfs(
-        Maze maze, Coordinate start, Coordinate end,
-        Queue<Cell> q, int[][] dist, Map<Cell, Cell> parent, int[][] shifts
+        Maze maze, Coordinate start, Coordinate end, int[][] dist, Map<Cell, Cell> parent
     ) {
+        Queue<Cell> q = new ArrayDeque<>();
+        int[][] shifts = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+
         q.add(maze.getCell(start));
         while (!q.isEmpty()) {
             Cell u = q.poll();
@@ -54,10 +54,10 @@ public class BFSSolver implements Solver {
             int i = u.row;
             int j = u.col;
             boolean[] shiftFlags = {
-                i < maze.height - 1 && dist[i + 1][j] == 0 && !u.getDownWall(),
-                j < maze.width - 1 && dist[i][j + 1] == 0 && !u.getRightWall(),
-                i > 0 && dist[i - 1][j] == 0 && !maze.getCell(i - 1, j).getDownWall(),
-                j > 0 && dist[i][j - 1] == 0 && !maze.getCell(i, j - 1).getRightWall()
+                hasDownNeighbour(maze, dist, u, i, j),
+                hasRightNeighbour(maze, dist, u, i, j),
+                hasUpperNeighbour(maze, dist, i, j),
+                hasLeftNeighbour(maze, dist, i, j)
             };
             for (int t = 0; t < shiftFlags.length; t++) {
                 if (!shiftFlags[t]) {
@@ -70,5 +70,21 @@ public class BFSSolver implements Solver {
                 parent.put(maze.getCell(iNew, jNew), u);
             }
         }
+    }
+
+    private static boolean hasLeftNeighbour(Maze maze, int[][] dist, int i, int j) {
+        return j > 0 && dist[i][j - 1] == 0 && !maze.getCell(i, j - 1).getRightWall();
+    }
+
+    private static boolean hasUpperNeighbour(Maze maze, int[][] dist, int i, int j) {
+        return i > 0 && dist[i - 1][j] == 0 && !maze.getCell(i - 1, j).getDownWall();
+    }
+
+    private static boolean hasRightNeighbour(Maze maze, int[][] dist, Cell u, int i, int j) {
+        return j < maze.width - 1 && dist[i][j + 1] == 0 && !u.getRightWall();
+    }
+
+    private static boolean hasDownNeighbour(Maze maze, int[][] dist, Cell u, int i, int j) {
+        return i < maze.height - 1 && dist[i + 1][j] == 0 && !u.getDownWall();
     }
 }
