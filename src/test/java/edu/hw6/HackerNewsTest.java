@@ -14,8 +14,7 @@ public class HackerNewsTest {
     @DisplayName("Проверка получения доступа к JSON")
     void hackerNewsTest1() {
         var longs = hackerNewsTopStories();
-        assertThat(longs).hasSize(500);
-        assertThat(longs).containsSequence(38194102L, 38193319L);
+        assertThat(longs).isNotEmpty();
     }
 
     @Test

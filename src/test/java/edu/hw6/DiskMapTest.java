@@ -43,10 +43,9 @@ public class DiskMapTest {
     @Test
     @DisplayName("Проверка чтения заранее созданного файла")
     void diskMapTest3() throws IOException {
-        var diskMap = new DiskMap("./src/res/test.txt");
-        diskMap.load();
         Path path = Paths.get("./src/res/test.txt");
-        System.out.println(path.getFileName());
+        var diskMap = new DiskMap(path.toString());
+        diskMap.load();
 
         assertThat(diskMap.containsKey("\uD83E\uDD28")).isTrue();
         assertThat(diskMap.containsKey("\uD83D\uDE28")).isTrue();

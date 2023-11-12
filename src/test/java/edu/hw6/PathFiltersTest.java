@@ -23,7 +23,7 @@ public class PathFiltersTest {
     void pathFiltersTest1() throws IOException {
         final long lower = 1;
         final long upper = 100_000;
-        final byte[] bytes = {(byte) -40, (byte) 61, (byte) -34};
+        final byte[] bytes = {(byte) -16, (byte) -97, (byte) -104};
         DirectoryStream.Filter<Path> filter = regularFile
             .and(readable)
             .and(hasSizeBetween(lower, upper))
