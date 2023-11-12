@@ -1,7 +1,6 @@
 package analyser;
 
 import java.nio.file.Path;
-import java.text.DateFormat;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
@@ -12,47 +11,48 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class LogsParser {
-    private static final String QBL = Pattern.quote("[");
-    private static final String QBR = Pattern.quote("]");
-    private static final String[] FIELD_NAMES =
-        {"ip", "user", "datetime", "request", "path", "protocol", "code", "sent", "referer", "agent"};
+
+    public enum Args {
+        IP, USER, DATETIME, REQUEST, PATH, PROTOCOL, CODE, SENT, REFERER, AGENT
+    }
+
     private static final Pattern PATTERN = Pattern.compile(
-        "^(?<ip>[\\w.:]+) - (?<user>.+) \\[(?<datetime>.*)\\] \"(?<request>\\w+) (?<path>[\\w/]+)"
-            + " (?<protocol>[\\w/.]+)\" (?<code>[\\d]+) (?<sent>[\\d]+) \"(?<referer>.+)\" \"(?<agent>.+)\"$");
+        "^(?<IP>[\\w.:]+) - (?<USER>.+) \\[(?<DATETIME>.*)\\] \"(?<REQUEST>\\w+) (?<PATH>[\\w/]+)"
+            + " (?<PROTOCOL>[\\w/.]+)\" (?<CODE>[\\d]+) (?<SENT>[\\d]+) \"(?<REFERER>.+)\" \"(?<AGENT>.+)\"$");
 
     private static final DateTimeFormatter DF =
         DateTimeFormatter.ofPattern("dd/MMM/yyyy:HH:mm:ss X").withLocale(Locale.ENGLISH).withResolverStyle(
             ResolverStyle.SMART);
 
-    private static Map<String, String> logToGroups(String log) {
+    private static Map<Args, String> logToGroups(String log) {
         Matcher matcher = PATTERN.matcher(log);
         if (!matcher.matches()) {
             throw new IllegalArgumentException("Логи не соответствуют паттерну!");
         }
-        Map<String, String> dict = new HashMap<>();
-        for (var field : FIELD_NAMES) {
-            dict.put(field, matcher.group(field));
+        Map<Args, String> dict = new HashMap<>();
+        for (var field : Args.values()) {
+            dict.put(field, matcher.group(field.name()));
         }
         return dict;
     }
 
-    private static Map<String, Object> groupsToObjects(Map<String, String> dict) {
-        var objectDict = new HashMap<String, Object>(dict);
+    private static Map<Args, Object> groupsToObjects(Map<Args, String> dict) {
+        var objectDict = new HashMap<Args, Object>(dict);
 
-        String time = dict.get("datetime");
-        var datetime = OffsetDateTime.parse(time, DF);
-        objectDict.put("datetime", datetime);
+        String time = dict.get(Args.DATETIME);
+        var parsedTime = OffsetDateTime.parse(time, DF);
+        objectDict.put(Args.DATETIME, parsedTime);
 
-        Path path = Path.of(dict.get("path"));
-        objectDict.put("path", path);
+        Path parsedPath = Path.of(dict.get(Args.PATH));
+        objectDict.put(Args.PATH, parsedPath);
 
-        Long sent = Long.valueOf(dict.get("sent"));
-        objectDict.put("sent", sent);
+        Long parsedSent = Long.valueOf(dict.get(Args.SENT));
+        objectDict.put(Args.SENT, parsedSent);
 
         return objectDict;
     }
 
-    public static Map<String, Object> parse(String log) {
+    public static Map<Args, Object> parse(String log) {
         return groupsToObjects(logToGroups(log));
     }
 

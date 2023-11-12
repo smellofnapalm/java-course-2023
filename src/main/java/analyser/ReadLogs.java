@@ -15,12 +15,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class ReadLogs {
+public final class ReadLogs {
 
     final static int MAX_DEPTH = 50;
     final static Path DIR = Path.of(".");
 
-    static List<Map<String, Object>> readOneFile(Path path, OffsetDateTime from, OffsetDateTime to) {
+    static List<Map<LogsParser.Args, Object>> readOneFile(Path path, OffsetDateTime from, OffsetDateTime to) {
         try {
             List<String> logs = Files.readAllLines(path);
             return readFromStringList(logs, from, to);
@@ -29,17 +29,21 @@ public class ReadLogs {
         }
     }
 
-    static private List<Map<String, Object>> readFromStringList(List<String> logs, OffsetDateTime from, OffsetDateTime to) {
+    static private List<Map<LogsParser.Args, Object>> readFromStringList(
+        List<String> logs,
+        OffsetDateTime from, OffsetDateTime to
+    ) {
         return logs.stream()
             .map(LogsParser::parse)
             .filter(
-                dict -> from.isBefore((OffsetDateTime) dict.get("datetime"))
-                    && to.isAfter((OffsetDateTime) dict.get("datetime")))
+                dict -> from.isBefore((OffsetDateTime) dict.get(LogsParser.Args.DATETIME))
+                    && to.isAfter((OffsetDateTime) dict.get(LogsParser.Args.DATETIME)))
             .toList();
     }
 
-    static List<Map<String, Object>> readOneFileFromURI(URI uri, OffsetDateTime from, OffsetDateTime to) {
-        HttpClient client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
+    static List<Map<LogsParser.Args, Object>> readOneFileFromURI(URI uri, OffsetDateTime from, OffsetDateTime to) {
+        final int timeout = 5;
+        HttpClient client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(timeout)).build();
         HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -63,8 +67,8 @@ public class ReadLogs {
         var matcher = FileSystems.getDefault().getPathMatcher(pattern);
         try {
             return Files.find(DIR, MAX_DEPTH,
-                (path, attributes) -> matcher.matches(path) && attributes.isRegularFile() &&
-                    extension(path).equals("txt")
+                (path, attributes) -> matcher.matches(path) && attributes.isRegularFile()
+                    && extension(path).equals("txt")
             ).toList();
         } catch (IOException ignored) {
             // Ошибка тут не должна бросаться -- директория по пути Path.of(".") всегда существует
@@ -72,9 +76,15 @@ public class ReadLogs {
         return List.of();
     }
 
-    static List<Map<String, Object>> readAllFilesGlob(List<Path> logFiles, OffsetDateTime from, OffsetDateTime to) {
-        List<Map<String, Object>> res = new ArrayList<>();
+    static List<Map<LogsParser.Args, Object>> readAllFilesGlob(
+        List<Path> logFiles,
+        OffsetDateTime from, OffsetDateTime to
+    ) {
+        List<Map<LogsParser.Args, Object>> res = new ArrayList<>();
         logFiles.stream().map(path -> readOneFile(path, from, to)).forEach(res::addAll);
         return res;
+    }
+
+    private ReadLogs() {
     }
 }

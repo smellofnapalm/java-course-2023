@@ -15,9 +15,9 @@ public class LogsParserTest {
             + "304 0 \"-\" \"Debian APT-HTTP/1.3 (0.8.16~exp12ubuntu10.21)\"";
         var dict = LogsParser.parse(example);
 
-        assertThat(dict.get("datetime")).isEqualTo(OffsetDateTime.parse("2015-05-17T08:05:32Z"));
-        assertThat(dict.get("sent")).isEqualTo(0L);
-        assertThat(dict.get("path")).isEqualTo(Path.of("/downloads", "product_1"));
+        assertThat(dict.get(LogsParser.Args.DATETIME)).isEqualTo(OffsetDateTime.parse("2015-05-17T08:05:32Z"));
+        assertThat(dict.get(LogsParser.Args.SENT)).isEqualTo(0L);
+        assertThat(dict.get(LogsParser.Args.PATH)).isEqualTo(Path.of("/downloads", "product_1"));
     }
 
     @Test
