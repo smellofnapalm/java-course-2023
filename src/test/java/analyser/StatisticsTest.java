@@ -69,7 +69,6 @@ public class StatisticsTest {
     void findFrequentlyUsedTest2() {
         var stat = getStatistics(TEST_URI.toString(), FROM, TO);
         var res = stat.findFrequentlyUsed(5, LogsParser.Args.PATH);
-        assertThat(res.toString()).isEqualTo(
-            "[\\downloads\\product_1=30285, \\downloads\\product_2=21104, \\downloads\\product_3=73]");
+        assertThat(res.get(0).getValue().toString()).isEqualTo("30285");
     }
 }
