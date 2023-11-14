@@ -1,13 +1,21 @@
 package analyser;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import java.time.LocalDate;
+import static analyser.ArgsParser.Args.FROM;
+import static analyser.ArgsParser.Args.PATH;
+import static analyser.ArgsParser.Args.TO;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static analyser.ArgsParser.Args.*;
 
 public class ArgsParserTest {
+    final static OffsetDateTime DATE = OffsetDateTime.of(
+        LocalDate.of(2023, 8, 3), LocalTime.MIDNIGHT, ZoneOffset.UTC);
+
     @Test
     @DisplayName("Тест парсера -- не передан путь")
     void parserTest1() {
@@ -33,8 +41,20 @@ public class ArgsParserTest {
         var dict = ArgsParser.parseArgs(args);
 
         assertThat(dict.containsKey(FROM)).isTrue();
-        assertThat(dict.get(FROM)).isEqualTo(LocalDate.now());
-        assertThat(dict.get(TO)).isEqualTo(LocalDate.now());
+        assertThat(dict.get(FROM)).isEqualTo(OffsetDateTime.MIN);
+        assertThat(dict.get(TO)).isEqualTo(OffsetDateTime.MAX);
+        assertThat(dict.get(PATH)).isEqualTo("C://Java");
+    }
+
+    @Test
+    @DisplayName("Тест парсера -- передан путь к файлу и дата отсчета")
+    void parserTest4() {
+        final String[] args = {"--path", "C://Java", "--from", "2023-08-03"};
+        var dict = ArgsParser.parseArgs(args);
+
+        assertThat(dict.containsKey(FROM)).isTrue();
+        assertThat(dict.get(FROM)).isEqualTo(DATE);
+        assertThat(dict.get(TO)).isEqualTo(OffsetDateTime.MAX);
         assertThat(dict.get(PATH)).isEqualTo("C://Java");
     }
 }

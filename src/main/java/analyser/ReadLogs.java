@@ -2,6 +2,7 @@ package analyser;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -15,10 +16,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Класс, который позволяет по URI/glob паттерну получить все логи в типизированном представлении
+ * Основной метод для внешнего взаимодействия
+ * <p> {@link #getStatistics(String uriOrPattern, OffsetDateTime from, OffsetDateTime to)} </p>
+ */
 public final class ReadLogs {
 
-    final static int MAX_DEPTH = 50;
-    final static Path DIR = Path.of(".");
+    final private static int MAX_DEPTH = 50;
+    final private static Path DIR = Path.of(".");
 
     static List<Map<LogsParser.Args, Object>> readOneFile(Path path, OffsetDateTime from, OffsetDateTime to) {
         try {
@@ -29,7 +35,7 @@ public final class ReadLogs {
         }
     }
 
-    static private List<Map<LogsParser.Args, Object>> readFromStringList(
+    private static List<Map<LogsParser.Args, Object>> readFromStringList(
         List<String> logs,
         OffsetDateTime from, OffsetDateTime to
     ) {
@@ -83,6 +89,31 @@ public final class ReadLogs {
         List<Map<LogsParser.Args, Object>> res = new ArrayList<>();
         logFiles.stream().map(path -> readOneFile(path, from, to)).forEach(res::addAll);
         return res;
+    }
+
+    private static boolean isURI(String path) {
+        URI uri = null;
+        try {
+            uri = new URI(path);
+            HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
+        } catch (URISyntaxException | IllegalArgumentException e) {
+            return false;
+        }
+        return true;
+    }
+
+    public static Statistics getStatistics(String uriOrPattern, OffsetDateTime from, OffsetDateTime to) {
+        List<String> paths;
+        List<Map<LogsParser.Args, Object>> logs;
+        if (isURI(uriOrPattern)) {
+            paths = List.of(uriOrPattern);
+            logs = readOneFileFromURI(URI.create(uriOrPattern), from, to);
+        } else {
+            var pathsClear = findMatchingFiles(uriOrPattern);
+            logs = readAllFilesGlob(pathsClear, from, to);
+            paths = pathsClear.stream().map(Path::toString).toList();
+        }
+        return new Statistics(logs, paths);
     }
 
     private ReadLogs() {

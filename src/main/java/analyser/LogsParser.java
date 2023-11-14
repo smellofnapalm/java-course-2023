@@ -10,6 +10,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Класс, который переводит одну строку логов в промежуточное типизированное представление
+ */
 public final class LogsParser {
 
     public enum Args {
@@ -17,7 +20,7 @@ public final class LogsParser {
     }
 
     private static final Pattern PATTERN = Pattern.compile(
-        "^(?<IP>[\\w.:]+) - (?<USER>.+) \\[(?<DATETIME>.*)\\] \"(?<REQUEST>\\w+) (?<PATH>[\\w/]+)"
+        "^(?<IP>[\\w.:]+) - (?<USER>.+) \\[(?<DATETIME>.*)\\] \"(?<REQUEST>\\w+) (?<PATH>.+)"
             + " (?<PROTOCOL>[\\w/.]+)\" (?<CODE>[\\d]+) (?<SENT>[\\d]+) \"(?<REFERER>.+)\" \"(?<AGENT>.+)\"$");
 
     private static final DateTimeFormatter DF =

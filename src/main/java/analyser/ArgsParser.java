@@ -1,30 +1,28 @@
 package analyser;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Класс, который занимается парсингом аргументов командной строки,
+ * вставкой значений по-умолчанию и приведение их к нужному типу
+ */
 public final class ArgsParser {
     public enum Args {
         PATH, FROM, TO, FORMAT
     }
 
-    private final static DateFormat DF = new SimpleDateFormat("yyyy-MM-dd");
-    private final static String TODAY = DF.format(java.sql.Date.valueOf(LocalDate.now()));
+    private final static DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final static String ADOC = "adoc";
     private final static String MARKDOWN = "markdown";
     private final static String DEFAULT_FORMAT = ADOC;
-    private final static Map<Args, String> DEFAULT_VALUES = Map.of(
-        Args.FROM, TODAY,
-        Args.TO, TODAY,
-        Args.FORMAT, DEFAULT_FORMAT
-    );
     private final static List<String> FORMAT_VALUES = List.of(MARKDOWN, ADOC);
 
     static Map<Args, Object> parseArgs(String[] args) {
@@ -43,32 +41,19 @@ public final class ArgsParser {
             }
         }
 
-        setDefaultValues(params);
-        return convertToObjects(params);
+        return setDefaultValues(params);
     }
 
     private static boolean dateIsValid(String date) {
-        DF.setLenient(false);
         try {
-            DF.parse(date);
-        } catch (ParseException e) {
+            LocalDate.parse(date, DF);
+        } catch (DateTimeParseException e) {
             return false;
         }
         return true;
     }
 
-    private static LocalDate convertToDate(String date) {
-        DF.setLenient(false);
-        Date res = null;
-        try {
-            res = DF.parse(date);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-        return res.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    }
-
-    private static void setDefaultValues(Map<Args, String> params) {
+    private static Map<Args, Object> setDefaultValues(Map<Args, String> params) {
         if (params == null || !params.containsKey(Args.PATH)) {
             throw new IllegalArgumentException("Не передан обязательный аргумент -- путь к логам!");
         }
@@ -78,26 +63,31 @@ public final class ArgsParser {
         boolean hasFormat = params.containsKey(Args.FORMAT)
             && FORMAT_VALUES.contains(params.get(Args.FORMAT));
 
-        if (!hasFrom && !hasTo) {
-            params.put(Args.FROM, DEFAULT_VALUES.get(Args.FROM));
-            params.put(Args.TO, DEFAULT_VALUES.get(Args.TO));
-        } else if (!hasFrom) {
-            params.put(Args.FROM, params.get(Args.TO));
-        } else if (!hasTo) {
-            params.put(Args.TO, params.get(Args.FROM));
-        }
-
         if (!hasFormat) {
-            params.put(Args.FORMAT, DEFAULT_VALUES.get(Args.FORMAT));
+            params.put(Args.FORMAT, DEFAULT_FORMAT);
         }
-    }
 
-    private static Map<Args, Object> convertToObjects(Map<Args, String> params) {
         Map<Args, Object> result = new HashMap<>(params);
-        String fromString = params.get(Args.FROM);
-        String toString = params.get(Args.TO);
-        result.put(Args.FROM, convertToDate(fromString));
-        result.put(Args.TO, convertToDate(toString));
+        if (!hasTo) {
+            result.put(Args.TO, OffsetDateTime.MAX);
+        } else {
+            result.put(Args.TO, OffsetDateTime.of(LocalDate.parse(params.get(Args.TO), DF),
+                    LocalTime.MIDNIGHT,
+                    ZoneOffset.UTC
+                )
+            );
+        }
+
+        if (!hasFrom) {
+            result.put(Args.FROM, OffsetDateTime.MIN);
+        } else {
+            result.put(Args.FROM, OffsetDateTime.of(LocalDate.parse(params.get(Args.FROM), DF),
+                    LocalTime.MIDNIGHT,
+                    ZoneOffset.UTC
+                )
+            );
+        }
+
         return result;
     }
 
