@@ -14,7 +14,7 @@ public class PersonSetTest {
     @Test
     @DisplayName("Тест с записью в одном потоке и поиском в другом")
     void personSetTest1() throws InterruptedException {
-        var personSet = new PersonSet();
+        var personSet = new LockPersonSet();
         AtomicReference<Person> res1 = new AtomicReference<>();
         AtomicReference<Person> res2 = new AtomicReference<>();
 
@@ -51,7 +51,7 @@ public class PersonSetTest {
     @Test
     @DisplayName("Такой же поиск, но теперь удаленного человека")
     void personSetTest2() throws InterruptedException {
-        var personSet = new PersonSet();
+        var personSet = new LockPersonSet();
         AtomicReference<Person> res1 = new AtomicReference<>();
         AtomicReference<Person> res2 = new AtomicReference<>();
 
