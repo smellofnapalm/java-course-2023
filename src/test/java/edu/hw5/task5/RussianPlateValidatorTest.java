@@ -10,14 +10,14 @@ public class RussianPlateValidatorTest {
     @Test
     @DisplayName("Тест на корректных номерах 1")
     void validatePlateTest1() {
-        String carNumber = "А123ВЕ777";
+        String carNumber = "A123BE777";
         assertThat(validatePlate(carNumber)).isTrue();
     }
 
     @Test
     @DisplayName("Тест на корректных номерах 2")
     void validatePlateTest2() {
-        String carNumber = "О777ОО177";
+        String carNumber = "O777OO177";
         assertThat(validatePlate(carNumber)).isTrue();
     }
 
