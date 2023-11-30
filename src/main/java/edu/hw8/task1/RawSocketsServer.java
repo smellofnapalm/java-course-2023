@@ -17,7 +17,7 @@ public final class RawSocketsServer {
     public RawSocketsServer() {
     }
 
-    private final int PORT = 8080;
+    private final int port = 8080;
     private volatile boolean flag = true;
     private final int maxThreads = Runtime.getRuntime().availableProcessors();
     final ExecutorService service = Executors.newFixedThreadPool(maxThreads);
@@ -27,7 +27,7 @@ public final class RawSocketsServer {
     }
 
     public void runServer() {
-        try (ServerSocket ss = new ServerSocket(PORT)) {
+        try (ServerSocket ss = new ServerSocket(port)) {
             while (flag) {
                 Socket socket = ss.accept();
                 service.execute(new SocketProcessor(socket));

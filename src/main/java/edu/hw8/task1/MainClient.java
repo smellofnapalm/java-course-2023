@@ -1,6 +1,6 @@
 package edu.hw8.task1;
 
-public class MainClient {
+public final class MainClient {
     public static void main(String[] args) throws InterruptedException {
         final var server = new RawSocketsServer();
         Thread serverThread = new Thread(server::runServer);
