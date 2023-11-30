@@ -31,7 +31,7 @@ public final class Variations {
     );
 
     Variations(List<Double> coeffs) {
-        coefficients = normalizeCoefficients(coeffs);
+        coefficients = coeffs;
     }
 
     Variations() {

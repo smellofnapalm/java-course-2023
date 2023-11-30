@@ -39,7 +39,7 @@ public final class FlameFunctions {
         probabilities = parameters.stream().map(kv -> (double) kv.get(probabilityKey) / total).toList();
 
         variations = new Variations(coefficients);
-        FlameFunction.USED_VARIATIONS = variations;
+        FlameFunction.usedVariations = variations;
     }
 
     public FlameFunctions() {

@@ -7,7 +7,7 @@ import java.util.function.UnaryOperator;
 public class FlameFunction implements UnaryOperator<PointWithColor> {
     final Color color;
     final double[] coeffs;
-    static Variations USED_VARIATIONS = new Variations();
+    static Variations usedVariations = new Variations();
 
     FlameFunction(Color color, double a, double b, double c, double d, double e, double f) {
         this.color = color;
@@ -27,8 +27,8 @@ public class FlameFunction implements UnaryOperator<PointWithColor> {
         final double new_x = coeffs[0] * x + coeffs[1] * y + coeffs[2];
         final double new_y = coeffs[3] * x + coeffs[4] * y + coeffs[5];
         final Point2D new_point = new Point2D.Double(new_x, new_y);
-        for (int i = 0; i < USED_VARIATIONS.coefficients.size(); i++) {
-            final double w = USED_VARIATIONS.coefficients.get(i);
+        for (int i = 0; i < usedVariations.coefficients.size(); i++) {
+            final double w = usedVariations.coefficients.get(i);
             final Point2D p = Variations.VARIATIONS.get(i).apply(new_point);
             resX += w * p.getX();
             resY += w * p.getY();

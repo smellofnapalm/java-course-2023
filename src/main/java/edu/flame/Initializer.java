@@ -32,13 +32,13 @@ public class Initializer {
         parse();
     }
 
-    private static final Pattern flameFuncPattern =
+    private static final Pattern FLAME_FUNC_PATTERN =
         Pattern.compile("^FlameFunction\\(RGB\\((.*)\\), AFFINE\\((.*)\\), PROB\\((.*)\\)\\)$");
-    private static final List<Pattern> otherPatterns = new ArrayList<>();
+    private static final List<Pattern> OTHER_PATTERNS = new ArrayList<>();
 
-    private static final List<String> defaultFormatList = List.of("bmp", "jpg", "jpeg", "png");
+    private static final List<String> DEFAULT_FORMAT_LIST = List.of("bmp", "jpg", "jpeg", "png");
 
-    private static final List<String> otherKeyWords = List.of(
+    private static final List<String> OTHER_KEY_WORDS = List.of(
         "VariationCoefficients",
         "height",
         "width",
@@ -52,11 +52,12 @@ public class Initializer {
 
     static {
         final String formattedString = "^%s\\((.*)\\)$";
-        for (var keyWord : otherKeyWords) {
-            otherPatterns.add(Pattern.compile(formattedString.formatted(keyWord)));
+        for (var keyWord : OTHER_KEY_WORDS) {
+            OTHER_PATTERNS.add(Pattern.compile(formattedString.formatted(keyWord)));
         }
     }
 
+    @SuppressWarnings("MagicNumber")
     void parse() {
         List<Map<String, Object>> flameFunctionsParameters = new ArrayList<>();
         List<Double> variationCoefficients = new ArrayList<>();
@@ -69,7 +70,7 @@ public class Initializer {
         int n = list.size();
         int i = 0;
         for (; i < n; i++) {
-            var matcher = flameFuncPattern.matcher(list.get(i));
+            var matcher = FLAME_FUNC_PATTERN.matcher(list.get(i));
             if (matcher.matches()) {
                 Map<String, Object> dict = new HashMap<>();
                 var colors = Arrays.stream(matcher.group(1).split(", ")).mapToInt(Integer::parseInt).toArray();
@@ -84,46 +85,46 @@ public class Initializer {
                 break;
             }
         }
-        var matcher = otherPatterns.get(0).matcher(list.get(i++));
+        var matcher = OTHER_PATTERNS.get(0).matcher(list.get(i++));
         if (matcher.matches()) {
             variationCoefficients =
                 Arrays.stream(matcher.group(1).split(", ")).mapToDouble(Double::parseDouble).boxed().toList();
         }
-        matcher = otherPatterns.get(1).matcher(list.get(i++));
+        matcher = OTHER_PATTERNS.get(1).matcher(list.get(i++));
         if (matcher.matches()) {
             height = Integer.parseInt(matcher.group(1));
         }
-        matcher = otherPatterns.get(2).matcher(list.get(i++));
+        matcher = OTHER_PATTERNS.get(2).matcher(list.get(i++));
         if (matcher.matches()) {
             width = Integer.parseInt(matcher.group(1));
         }
-        matcher = otherPatterns.get(3).matcher(list.get(i++));
+        matcher = OTHER_PATTERNS.get(3).matcher(list.get(i++));
         if (matcher.matches()) {
             iterations = Integer.parseInt(matcher.group(1));
         }
-        matcher = otherPatterns.get(4).matcher(list.get(i++));
+        matcher = OTHER_PATTERNS.get(4).matcher(list.get(i++));
         if (matcher.matches()) {
             pathToFile = Path.of(matcher.group(1));
         }
-        matcher = otherPatterns.get(5).matcher(list.get(i++));
+        matcher = OTHER_PATTERNS.get(5).matcher(list.get(i++));
         if (matcher.matches()) {
             format = matcher.group(1);
-            if (!defaultFormatList.contains(format)) {
-                format = defaultFormatList.get(0);
+            if (!DEFAULT_FORMAT_LIST.contains(format)) {
+                format = DEFAULT_FORMAT_LIST.get(0);
             }
         }
-        matcher = otherPatterns.get(6).matcher(list.get(i++));
+        matcher = OTHER_PATTERNS.get(6).matcher(list.get(i++));
         if (matcher.matches()) {
             window = Integer.parseInt(matcher.group(1));
             if (window % 2 == 0) {
                 window--;
             }
         }
-        matcher = otherPatterns.get(7).matcher(list.get(i++));
+        matcher = OTHER_PATTERNS.get(7).matcher(list.get(i++));
         if (matcher.matches()) {
             gamma = Double.parseDouble(matcher.group(1));
         }
-        matcher = otherPatterns.get(8).matcher(list.get(i));
+        matcher = OTHER_PATTERNS.get(8).matcher(list.get(i));
         if (matcher.matches()) {
             threshold = Double.parseDouble(matcher.group(1));
         }
