@@ -23,18 +23,19 @@ public final class Variations {
     );
 
     public final List<Double> coefficients;
+    private final static List<Double> DEFAULT_COEFFICIENTS = List.of(
+        1.6 / 6.4,
+        2.0 / 6.4,
+        1.3 / 6.4,
+        1.5 / 6.4
+    );
 
     Variations(List<Double> coeffs) {
         coefficients = normalizeCoefficients(coeffs);
     }
 
     Variations() {
-        coefficients = normalizeCoefficients(List.of(
-            1.6,
-            2.0,
-            1.3,
-            1.5
-        ));
+        coefficients = DEFAULT_COEFFICIENTS;
     }
 
     private List<Double> normalizeCoefficients(List<Double> coeffs) {

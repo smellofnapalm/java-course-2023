@@ -2,20 +2,18 @@ package edu.flame;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
-import java.util.Arrays;
 import java.util.function.UnaryOperator;
 
 public class FlameFunction implements UnaryOperator<PointWithColor> {
     final Color color;
     final double[] coeffs;
-    final static Variations USED_VARIATIONS = new Variations();
+    static Variations USED_VARIATIONS = new Variations();
 
     FlameFunction(Color color, double a, double b, double c, double d, double e, double f) {
         this.color = color;
         double normalizeX = 1.0 / (a + b + c);
         double normalizeY = 1.0 / (d + e + f);
-        coeffs = new double[] {normalizeX * a, normalizeX * b, normalizeX * c, normalizeY * d, normalizeY * e,
-            normalizeY * f};
+        coeffs = new double[] {a, b, c, d, e, f};
     }
 
     @Override

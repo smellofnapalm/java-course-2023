@@ -20,18 +20,11 @@ public class ImageGenerator {
         this.height = height;
         this.width = width;
         this.res = new Cell[height][width];
-
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                res[i][j] = new Cell(BLACK);
-            }
-        }
     }
 
-    void generateImage(int iterations, double threshold) {
+    void generateImage(int iterations, double threshold, FlameFunctions flameFunctions) {
         int iterPerThread = iterations / threadCount;
         for (int th = 0; th < threadCount; th++) {
-            FlameFunctions flameFunctions = new FlameFunctions();
             Thread thread = new Thread(() -> doIterations(threshold, iterPerThread, flameFunctions));
             thread.start();
             threads.add(thread);
@@ -39,7 +32,8 @@ public class ImageGenerator {
         threads.forEach(t -> {
             try {
                 t.join();
-            } catch (InterruptedException ignored) {
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Не удалось закончить выполнение потока!", e);
             }
         });
     }
@@ -59,7 +53,10 @@ public class ImageGenerator {
             }
             int x = (int) (Math.floor((p.point.getX() / threshold) * height / 2.0) + height / 2.0);
             int y = (int) (Math.floor((p.point.getY() / threshold) * width / 2.0) + width / 2.0);
-            synchronized (res[x][y]) {
+            synchronized (this.res) {
+                if (res[x][y] == null) {
+                    res[x][y] = new Cell(BLACK);
+                }
                 res[x][y].count++;
                 res[x][y].color = p.color;
             }

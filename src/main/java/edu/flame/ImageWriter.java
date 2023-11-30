@@ -79,6 +79,9 @@ public class ImageWriter {
         int b = 0;
         for (int i1 = i - half; i1 <= i + half; i1++) {
             for (int j1 = j - half; j1 <= j + half; j1++) {
+                if (res[i1][j1] == null) {
+                    res[i1][j1] = new Cell(Color.BLACK);
+                }
                 cnt += res[i1][j1].count;
                 r += res[i1][j1].color.getRed();
                 g += res[i1][j1].color.getGreen();
