@@ -1,12 +1,18 @@
 package edu.hw8.task2;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public final class FibonacciCalculator {
     final int n;
     final int threadCount;
-    final List<Long> fibList;
+    final List<Long> fibList = new Vector<>();
+    final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     final ThreadPool threadPool;
     final private static int WAIT_TIME = 100;
 
@@ -16,48 +22,57 @@ public final class FibonacciCalculator {
         }
         this.n = n;
         this.threadCount = threadCount;
-        this.fibList = new CopyOnWriteArrayList<>();
         for (int i = 0; i <= n; i++) {
             fibList.add(0L);
         }
+        fibList.set(1, 1L);
+        fibList.set(2, 1L);
         threadPool = PoolFabric.create(threadCount);
     }
 
-    long calcNth() {
+    long[] calcMany(int[] ns) throws InterruptedException {
         threadPool.start();
-        threadPool.execute(() -> fib(n));
-        try {
-            threadPool.close();
-        } catch (Exception ignored) {
+        for (final int n : ns) {
+            threadPool.execute(() -> fib(n));
         }
-        return fibList.get(n);
+        Thread.sleep(WAIT_TIME);
+        return Arrays.stream(ns).mapToLong(fibList::get).toArray();
     }
 
-    private void fib(int n) {
-        if (n == 0 || fibList.get(n) != 0) {
-            return;
-        }
-        if (fibList.get(n - 1) == 0) {
-            threadPool.execute(() -> fib(n - 1));
-            try {
-                synchronized (Thread.currentThread()) {
-                    Thread.currentThread().wait(WAIT_TIME);
-                }
-            } catch (InterruptedException ignored) {
+    private long fib(int n) {
+        if (n <= 2) {
+            if (n == 0) {
+                return 0;
+            } else {
+                return 1;
             }
         }
-        if (fibList.get(n - 2) == 0) {
-            threadPool.execute(() -> fib(n - 2));
-            try {
-                synchronized (Thread.currentThread()) {
-                    Thread.currentThread().wait(WAIT_TIME);
-                }
-            } catch (InterruptedException ignored) {
-            }
+        final long that;
+        long left;
+        long right;
+        try {
+            lock.readLock().lock();
+            that = fibList.get(n);
+            left = fibList.get(n - 2);
+            right = fibList.get(n - 1);
+        } finally {
+            lock.readLock().unlock();
         }
-        if (fibList.get(n) == 0) {
-            Thread.currentThread().interrupt();
-            fibList.set(n, fibList.get(n - 1) + fibList.get(n - 2));
+        if (that != 0) {
+            return that;
         }
+        if (right == 0) {
+            right = fib(n - 1);
+        }
+        if (left == 0) {
+            left = fib(n - 2);
+        }
+        try {
+            lock.writeLock().lock();
+            fibList.set(n, left + right);
+        } finally {
+            lock.writeLock().unlock();
+        }
+        return left + right;
     }
 }

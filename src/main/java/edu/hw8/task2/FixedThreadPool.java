@@ -2,11 +2,13 @@ package edu.hw8.task2;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 class FixedThreadPool implements ThreadPool {
     private final int numThreads;
     private final Thread[] threads;
     private final BlockingQueue<Runnable> taskQueue;
+    private final AtomicBoolean isDown = new AtomicBoolean(false);
 
     FixedThreadPool(int numThreads) {
         this.numThreads = numThreads;
@@ -25,28 +27,27 @@ class FixedThreadPool implements ThreadPool {
     @Override
     public void execute(Runnable runnable) {
         try {
-            taskQueue.put(runnable);
+            while (!taskQueue.contains(runnable)) {
+                taskQueue.put(runnable);
+            }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            execute(runnable);
         }
     }
 
     @Override
     public void close() {
-        for (Thread thread : threads) {
-            thread.interrupt();
-        }
+        isDown.set(true);
     }
 
     private Runnable getDefaultRunnable() {
         return () -> {
-            while (true) {
+            while (!isDown.get() && !Thread.currentThread().isInterrupted()) {
                 try {
                     Runnable task = taskQueue.take();
                     task.run();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    break;
                 }
             }
         };
