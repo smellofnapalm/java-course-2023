@@ -1,11 +1,8 @@
 package edu.hw8.task2;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public final class FibonacciCalculator {
@@ -32,8 +29,8 @@ public final class FibonacciCalculator {
 
     long[] calcMany(int[] ns) throws InterruptedException {
         threadPool.start();
-        for (final int n : ns) {
-            threadPool.execute(() -> fib(n));
+        for (final int k : ns) {
+            threadPool.execute(() -> fib(k));
         }
         Thread.sleep(WAIT_TIME);
         return Arrays.stream(ns).mapToLong(fibList::get).toArray();
