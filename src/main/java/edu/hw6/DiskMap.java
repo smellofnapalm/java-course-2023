@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Instant;
+import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,16 +15,21 @@ import org.jetbrains.annotations.Nullable;
 
 public class DiskMap implements Map<String, String> {
     final Map<String, String> dict = new HashMap<>();
-    Path path = Paths.get(Instant.now().getNano() + ".txt");
-
-    DiskMap() throws IOException {
-        Files.createFile(path);
-    }
+    final Path path;
 
     DiskMap(String userFileName) {
         path = Paths.get(userFileName);
         if (!path.toFile().isFile()) {
-            throw new IllegalArgumentException("Путь к файлу указан некорректно!");
+            try {
+                Files.createFile(path);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        try {
+            load();
+        } catch (IOException e) {
+            throw new RuntimeException("Не удалось загрузить данные из файла!", e);
         }
     }
 
@@ -38,15 +43,23 @@ public class DiskMap implements Map<String, String> {
             .collect(Collectors.joining());
     }
 
-    void save() throws IOException {
-        Files.writeString(path, this.toString());
+    private void save() {
+        try {
+            Files.writeString(path, this.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    void load() throws IOException {
+    private void load() throws IOException {
         dict.clear();
-        Files.readAllLines(path).stream()
-            .map(str -> str.split(":"))
-            .forEach(kv -> dict.put(kv[0], kv[1]));
+        try {
+            Files.readAllLines(path).stream()
+                .map(str -> str.split(":"))
+                .forEach(kv -> dict.put(kv[0], kv[1]));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -77,17 +90,26 @@ public class DiskMap implements Map<String, String> {
     @Nullable
     @Override
     public String put(String key, String value) {
-        return dict.put(key, value);
+        try {
+            Files.writeString(path, "%s:%s".formatted(key, value), StandardOpenOption.APPEND);
+            return dict.put(key, value);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Невозможно обновить файл на диске!");
+        }
     }
 
     @Override
     public String remove(Object key) {
-        return dict.remove(key);
+        var toReturn = dict.remove(key);
+        save();
+        return toReturn;
     }
 
     @Override
     public void putAll(@NotNull Map<? extends String, ? extends String> m) {
-        dict.putAll(m);
+        for (var kv : m.entrySet()) {
+            this.put(kv.getKey(), kv.getValue());
+        }
     }
 
     @Override
