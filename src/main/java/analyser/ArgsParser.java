@@ -25,7 +25,7 @@ public final class ArgsParser {
     private final static String DEFAULT_FORMAT = ADOC;
     private final static List<String> FORMAT_VALUES = List.of(MARKDOWN, ADOC);
 
-    static Map<Args, Object> parseArgs(String[] args) {
+    static ArgsContainer parseArgs(String[] args) {
         if (args == null || args.length == 0) {
             throw new IllegalArgumentException("Не передано аргументов командной строки!");
         }
@@ -53,7 +53,7 @@ public final class ArgsParser {
         return true;
     }
 
-    private static Map<Args, Object> setDefaultValues(Map<Args, String> params) {
+    private static ArgsContainer setDefaultValues(Map<Args, String> params) {
         if (params == null || !params.containsKey(Args.PATH)) {
             throw new IllegalArgumentException("Не передан обязательный аргумент -- путь к логам!");
         }
@@ -63,32 +63,38 @@ public final class ArgsParser {
         boolean hasFormat = params.containsKey(Args.FORMAT)
             && FORMAT_VALUES.contains(params.get(Args.FORMAT));
 
+        String path = params.get(Args.PATH);
+        OffsetDateTime from;
+        OffsetDateTime to;
+        String format;
+
         if (!hasFormat) {
-            params.put(Args.FORMAT, DEFAULT_FORMAT);
+            format = DEFAULT_FORMAT;
+        } else {
+            format = params.get(Args.FORMAT);
         }
 
-        Map<Args, Object> result = new HashMap<>(params);
         if (!hasTo) {
-            result.put(Args.TO, OffsetDateTime.MAX);
+            to = OffsetDateTime.MAX;
         } else {
-            result.put(Args.TO, OffsetDateTime.of(LocalDate.parse(params.get(Args.TO), DF),
-                    LocalTime.MIDNIGHT,
-                    ZoneOffset.UTC
-                )
+            to = OffsetDateTime.of(
+                LocalDate.parse(params.get(Args.TO), DF),
+                LocalTime.MIDNIGHT,
+                ZoneOffset.UTC
             );
         }
 
         if (!hasFrom) {
-            result.put(Args.FROM, OffsetDateTime.MIN);
+            from = OffsetDateTime.MIN;
         } else {
-            result.put(Args.FROM, OffsetDateTime.of(LocalDate.parse(params.get(Args.FROM), DF),
-                    LocalTime.MIDNIGHT,
-                    ZoneOffset.UTC
-                )
+            from = OffsetDateTime.of(
+                LocalDate.parse(params.get(Args.FROM), DF),
+                LocalTime.MIDNIGHT,
+                ZoneOffset.UTC
             );
         }
 
-        return result;
+        return new ArgsContainer(path, from, to, format);
     }
 
     private ArgsParser() {

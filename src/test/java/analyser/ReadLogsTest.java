@@ -6,11 +6,11 @@ import java.time.OffsetDateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import static analyser.ReadLogs.findMatchingFiles;
-import static analyser.ReadLogs.getStatistics;
-import static analyser.ReadLogs.readAllFilesGlob;
-import static analyser.ReadLogs.readOneFile;
-import static analyser.ReadLogs.readOneFileFromURI;
+import static analyser.reader.ReadLogs.findMatchingFiles;
+import static analyser.reader.ReadLogs.getStatistics;
+import static analyser.reader.ReadLogs.readAllFilesGlob;
+import static analyser.reader.ReadLogs.readOneFile;
+import static analyser.reader.ReadLogs.readOneFileFromURI;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class ReadLogsTest {
@@ -45,8 +45,8 @@ public class ReadLogsTest {
     void readOneFileTest1() {
         var list = readOneFile(TEST_PATH1, FROM, TO);
         int size = list.size();
-        assertThat(list.get(0).get(LogsParser.Args.IP)).isEqualTo("93.180.71.3");
-        assertThat(list.get(size - 1).get(LogsParser.Args.SENT)).isEqualTo(1768L);
+        assertThat(list.get(0).ip()).isEqualTo("93.180.71.3");
+        assertThat(list.get(size - 1).sent()).isEqualTo(1768L);
     }
 
     @Test

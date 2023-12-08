@@ -4,9 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
-import java.util.Map;
 import static analyser.ArgsParser.parseArgs;
-import static analyser.ReadLogs.getStatistics;
+import static analyser.reader.ReadLogs.getStatistics;
 
 public final class Analyzer {
     @SuppressWarnings("RegexpSinglelineJava")
@@ -14,12 +13,12 @@ public final class Analyzer {
         if (args == null || args.length == 0) {
             throw new IllegalArgumentException("Аргументы командной строки должны быть непустыми!");
         }
-        Map<ArgsParser.Args, Object> argsObjectMap = parseArgs(args);
+        ArgsContainer argsObjectMap = parseArgs(args);
         System.out.println("Получили аргументы командной строки");
-        String pathToLogs = (String) argsObjectMap.get(ArgsParser.Args.PATH);
-        OffsetDateTime from = (OffsetDateTime) argsObjectMap.get(ArgsParser.Args.FROM);
-        OffsetDateTime to = (OffsetDateTime) argsObjectMap.get(ArgsParser.Args.TO);
-        String format = (String) argsObjectMap.get(ArgsParser.Args.FORMAT);
+        String pathToLogs = argsObjectMap.path();
+        OffsetDateTime from = argsObjectMap.from();
+        OffsetDateTime to = argsObjectMap.to();
+        String format = argsObjectMap.format();
 
         Statistics stat = getStatistics(pathToLogs, from, to);
         System.out.println("Прочитали файл(-ы) и посчитали статистику");

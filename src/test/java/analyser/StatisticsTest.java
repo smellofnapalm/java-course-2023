@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import static analyser.ReadLogs.getStatistics;
+import static analyser.reader.ReadLogs.getStatistics;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class StatisticsTest {

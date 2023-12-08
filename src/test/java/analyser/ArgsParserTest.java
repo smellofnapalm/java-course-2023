@@ -7,9 +7,6 @@ import java.time.ZoneOffset;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import static analyser.ArgsParser.Args.FROM;
-import static analyser.ArgsParser.Args.PATH;
-import static analyser.ArgsParser.Args.TO;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class ArgsParserTest {
@@ -40,10 +37,9 @@ public class ArgsParserTest {
         final String[] args = {"--path", "C://Java"};
         var dict = ArgsParser.parseArgs(args);
 
-        assertThat(dict.containsKey(FROM)).isTrue();
-        assertThat(dict.get(FROM)).isEqualTo(OffsetDateTime.MIN);
-        assertThat(dict.get(TO)).isEqualTo(OffsetDateTime.MAX);
-        assertThat(dict.get(PATH)).isEqualTo("C://Java");
+        assertThat(dict.from()).isEqualTo(OffsetDateTime.MIN);
+        assertThat(dict.to()).isEqualTo(OffsetDateTime.MAX);
+        assertThat(dict.path()).isEqualTo("C://Java");
     }
 
     @Test
@@ -52,9 +48,8 @@ public class ArgsParserTest {
         final String[] args = {"--path", "C://Java", "--from", "2023-08-03"};
         var dict = ArgsParser.parseArgs(args);
 
-        assertThat(dict.containsKey(FROM)).isTrue();
-        assertThat(dict.get(FROM)).isEqualTo(DATE);
-        assertThat(dict.get(TO)).isEqualTo(OffsetDateTime.MAX);
-        assertThat(dict.get(PATH)).isEqualTo("C://Java");
+        assertThat(dict.from()).isEqualTo(DATE);
+        assertThat(dict.to()).isEqualTo(OffsetDateTime.MAX);
+        assertThat(dict.path()).isEqualTo("C://Java");
     }
 }

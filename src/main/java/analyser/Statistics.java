@@ -3,6 +3,7 @@ package analyser;
 import analyser.printer.ADOCPrinter;
 import analyser.printer.MarkdownPrinter;
 import analyser.printer.Printer;
+import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap;
@@ -19,12 +20,12 @@ public final class Statistics {
     public static final String ADOC = "adoc";
     public static final String AMOUNT = "Количество";
     public static final String RESPONSE_AMOUNT = "Количество запросов";
-    final List<Map<LogsParser.Args, Object>> data;
+    final List<ParsedLogContainer> data;
     final List<String> paths;
     final static DateTimeFormatter DF = DateTimeFormatter.ISO_DATE;
     final static String IPV4 = "^[0-9.]+$";
 
-    Statistics(List<Map<LogsParser.Args, Object>> data, List<String> paths) {
+    public Statistics(List<ParsedLogContainer> data, List<String> paths) {
         this.data = data;
         this.paths = paths;
     }
@@ -34,30 +35,41 @@ public final class Statistics {
     }
 
     List<Map.Entry<String, Object>> findFrequentlyUsed(int k, LogsParser.Args arg) {
-        return data.stream()
-            .collect(Collectors.groupingBy(dict -> dict.get(arg).toString(), Collectors.counting()))
-            .entrySet().stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, kv -> (Object) kv.getValue()))
-            .entrySet().stream()
-            .sorted((o1, o2) -> Math.toIntExact((Long) o2.getValue() - (Long) o1.getValue()))
-            .limit(k)
-            .toList();
+        try {
+            Field field = ParsedLogContainer.class.getField(String.valueOf(arg));
+            return data.stream()
+                .collect(Collectors.groupingBy(dict -> {
+                    try {
+                        return field.get(dict).toString();
+                    } catch (IllegalAccessException ignored) {
+                    }
+                    return null;
+                }, Collectors.counting()))
+                .entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, kv -> (Object) kv.getValue()))
+                .entrySet().stream()
+                .sorted((o1, o2) -> Math.toIntExact((Long) o2.getValue() - (Long) o1.getValue()))
+                .limit(k)
+                .toList();
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     double averageResponseSize() {
-        return data.stream().mapToLong(dict -> (long) dict.get(LogsParser.Args.SENT)).average().orElse(0);
+        return data.stream().mapToLong(ParsedLogContainer::sent).average().orElse(0);
     }
 
     String findEarliestDate() {
         var date = data.stream()
-            .map(dict -> ((OffsetDateTime) dict.get(LogsParser.Args.DATETIME)))
+            .map(ParsedLogContainer::dateTime)
             .min(OffsetDateTime::compareTo).orElse(OffsetDateTime.MAX);
         return date.format(DF);
     }
 
     String findLatestDate() {
         var date = data.stream()
-            .map(dict -> ((OffsetDateTime) dict.get(LogsParser.Args.DATETIME)))
+            .map(ParsedLogContainer::dateTime)
             .max(OffsetDateTime::compareTo).orElse(OffsetDateTime.MAX);
         return date.format(DF);
     }
@@ -65,7 +77,7 @@ public final class Statistics {
     List<Map.Entry<String, Object>> findIPv4AndIPv6() {
         return data.stream()
             .collect(Collectors.groupingBy(dict -> {
-                var ip = (String) dict.get(LogsParser.Args.IP);
+                var ip = dict.ip();
                 return ip.matches(IPV4) ? "IPv4" : "IPv6";
             }, Collectors.counting()))
             .entrySet().stream()
@@ -77,7 +89,7 @@ public final class Statistics {
     List<Map.Entry<String, Object>> findTimeOfResponses() {
         return data.stream()
             .collect(Collectors.groupingBy(dict -> {
-                var dateTime = (OffsetDateTime) dict.get(LogsParser.Args.DATETIME);
+                var dateTime = dict.dateTime();
                 return String.valueOf(dateTime.getHour());
             }, Collectors.counting()))
             .entrySet().stream()

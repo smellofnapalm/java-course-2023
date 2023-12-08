@@ -9,6 +9,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import static analyser.LogsParser.Args.AGENT;
+import static analyser.LogsParser.Args.CODE;
+import static analyser.LogsParser.Args.IP;
+import static analyser.LogsParser.Args.PROTOCOL;
+import static analyser.LogsParser.Args.REFERER;
+import static analyser.LogsParser.Args.REQUEST;
+import static analyser.LogsParser.Args.USER;
 
 /**
  * Класс, который переводит одну строку логов в промежуточное типизированное представление
@@ -39,23 +46,26 @@ public final class LogsParser {
         return dict;
     }
 
-    private static Map<Args, Object> groupsToObjects(Map<Args, String> dict) {
-        var objectDict = new HashMap<Args, Object>(dict);
-
+    private static ParsedLogContainer groupsToObjects(Map<Args, String> dict) {
         String time = dict.get(Args.DATETIME);
-        var parsedTime = OffsetDateTime.parse(time, DF);
-        objectDict.put(Args.DATETIME, parsedTime);
-
+        OffsetDateTime parsedTime = OffsetDateTime.parse(time, DF);
         Path parsedPath = Path.of(dict.get(Args.PATH));
-        objectDict.put(Args.PATH, parsedPath);
-
-        Long parsedSent = Long.valueOf(dict.get(Args.SENT));
-        objectDict.put(Args.SENT, parsedSent);
-
-        return objectDict;
+        long parsedSent = Long.parseLong(dict.get(Args.SENT));
+        return new ParsedLogContainer(
+            dict.get(IP),
+            dict.get(USER),
+            parsedTime,
+            dict.get(REQUEST),
+            parsedPath,
+            dict.get(PROTOCOL),
+            dict.get(CODE),
+            parsedSent,
+            dict.get(REFERER),
+            dict.get(AGENT)
+        );
     }
 
-    public static Map<Args, Object> parse(String log) {
+    public static ParsedLogContainer parse(String log) {
         return groupsToObjects(logToGroups(log));
     }
 

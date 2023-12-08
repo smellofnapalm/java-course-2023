@@ -4,7 +4,7 @@ import java.net.URI;
 import java.time.OffsetDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import static analyser.ReadLogs.getStatistics;
+import static analyser.reader.ReadLogs.getStatistics;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class ADOCPrinterTest {
