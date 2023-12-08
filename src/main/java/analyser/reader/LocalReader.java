@@ -21,7 +21,7 @@ public class LocalReader implements ReadLogs {
         }
     }
 
-    List<Path> findMatchingFiles(String globPattern) {
+    public List<Path> findMatchingFiles(String globPattern) {
         String pattern = "glob:./" + globPattern;
         var matcher = FileSystems.getDefault().getPathMatcher(pattern);
         try {
@@ -35,7 +35,7 @@ public class LocalReader implements ReadLogs {
         return List.of();
     }
 
-    List<ParsedLogContainer> readAllFilesGlob(
+    public List<ParsedLogContainer> readAllFilesGlob(
         List<Path> logFiles,
         OffsetDateTime from, OffsetDateTime to
     ) {

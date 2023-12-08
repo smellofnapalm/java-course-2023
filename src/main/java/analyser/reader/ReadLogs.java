@@ -29,8 +29,8 @@ public interface ReadLogs {
         return logs.stream()
             .map(LogsParser::parse)
             .filter(
-                dict -> from.isBefore(dict.dateTime())
-                    && to.isAfter(dict.dateTime()))
+                dict -> from.isBefore(dict.datetime())
+                    && to.isAfter(dict.datetime()))
             .toList();
     }
 

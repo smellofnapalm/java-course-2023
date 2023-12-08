@@ -3,7 +3,8 @@ package analyser;
 import analyser.printer.ADOCPrinter;
 import analyser.printer.MarkdownPrinter;
 import analyser.printer.Printer;
-import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap;
@@ -36,12 +37,14 @@ public final class Statistics {
 
     List<Map.Entry<String, Object>> findFrequentlyUsed(int k, LogsParser.Args arg) {
         try {
-            Field field = ParsedLogContainer.class.getField(String.valueOf(arg));
+            Method method
+                = ParsedLogContainer.class.getMethod(String.valueOf(arg).toLowerCase());
             return data.stream()
                 .collect(Collectors.groupingBy(dict -> {
                     try {
-                        return field.get(dict).toString();
-                    } catch (IllegalAccessException ignored) {
+                        var value = method.invoke(dict);
+                        return value.toString();
+                    } catch (IllegalAccessException | InvocationTargetException ignored) {
                     }
                     return null;
                 }, Collectors.counting()))
@@ -51,7 +54,7 @@ public final class Statistics {
                 .sorted((o1, o2) -> Math.toIntExact((Long) o2.getValue() - (Long) o1.getValue()))
                 .limit(k)
                 .toList();
-        } catch (NoSuchFieldException e) {
+        } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }
@@ -62,14 +65,14 @@ public final class Statistics {
 
     String findEarliestDate() {
         var date = data.stream()
-            .map(ParsedLogContainer::dateTime)
+            .map(ParsedLogContainer::datetime)
             .min(OffsetDateTime::compareTo).orElse(OffsetDateTime.MAX);
         return date.format(DF);
     }
 
     String findLatestDate() {
         var date = data.stream()
-            .map(ParsedLogContainer::dateTime)
+            .map(ParsedLogContainer::datetime)
             .max(OffsetDateTime::compareTo).orElse(OffsetDateTime.MAX);
         return date.format(DF);
     }
@@ -89,7 +92,7 @@ public final class Statistics {
     List<Map.Entry<String, Object>> findTimeOfResponses() {
         return data.stream()
             .collect(Collectors.groupingBy(dict -> {
-                var dateTime = dict.dateTime();
+                var dateTime = dict.datetime();
                 return String.valueOf(dateTime.getHour());
             }, Collectors.counting()))
             .entrySet().stream()

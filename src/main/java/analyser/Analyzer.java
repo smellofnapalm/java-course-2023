@@ -1,11 +1,14 @@
 package analyser;
 
+import analyser.reader.LocalReader;
+import analyser.reader.ReadLogs;
+import analyser.reader.URIReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import static analyser.ArgsParser.parseArgs;
-import static analyser.reader.ReadLogs.getStatistics;
+import static analyser.reader.ReadLogs.isURI;
 
 public final class Analyzer {
     @SuppressWarnings("RegexpSinglelineJava")
@@ -20,7 +23,9 @@ public final class Analyzer {
         OffsetDateTime to = argsObjectMap.to();
         String format = argsObjectMap.format();
 
-        Statistics stat = getStatistics(pathToLogs, from, to);
+        ReadLogs reader = (isURI(pathToLogs) ? new URIReader() : new LocalReader());
+
+        Statistics stat = reader.getStatistics(pathToLogs, from, to);
         System.out.println("Прочитали файл(-ы) и посчитали статистику");
 
         String output = stat.getOutput(format);
