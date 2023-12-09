@@ -24,9 +24,7 @@ public class StatisticsCalculator {
             tasks.add(task);
         }
         List<Statistics> resultingStatistics = new ArrayList<>();
-        tasks.forEach(task -> {
-            resultingStatistics.add(task.join());
-        });
+        tasks.forEach(task -> resultingStatistics.add(task.join()));
         return resultingStatistics;
     }
 
@@ -44,9 +42,9 @@ public class StatisticsCalculator {
 
         private Statistics computeStat(Statistics.Args statName) {
             double value = switch (statName) {
-                case MAX -> Arrays.stream(data).max().orElseGet(() -> Double.MAX_VALUE);
-                case MIN -> Arrays.stream(data).min().orElseGet(() -> Double.MAX_VALUE);
-                case MEAN -> Arrays.stream(data).average().orElseGet(() -> Double.MAX_VALUE);
+                case MAX -> Arrays.stream(data).max().orElse(Double.MAX_VALUE);
+                case MIN -> Arrays.stream(data).min().orElse(Double.MAX_VALUE);
+                case MEAN -> Arrays.stream(data).average().orElse(Double.MAX_VALUE);
                 case SUM -> Arrays.stream(data).sum();
             };
             return new Statistics(statName, value);
