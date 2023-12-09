@@ -10,6 +10,9 @@ import java.time.OffsetDateTime;
 import static analyser.ArgsParser.parseArgs;
 import static analyser.reader.ReadLogs.isURI;
 
+/**
+ * Главный класс, делает всю работу по получению таблички с информацией и записывает ее в файл
+ */
 public final class Analyzer {
     @SuppressWarnings("RegexpSinglelineJava")
     public static void analyze(String[] args) {
@@ -24,13 +27,18 @@ public final class Analyzer {
         String format = argsObjectMap.format();
 
         ReadLogs reader = (isURI(pathToLogs) ? new URIReader() : new LocalReader());
-
         Statistics stat = reader.getStatistics(pathToLogs, from, to);
         System.out.println("Прочитали файл(-ы) и посчитали статистику");
 
-        String output = stat.getOutput(format);
+        OutputMaker outputMaker = new OutputMaker(stat);
+        String output = outputMaker.getOutput(format);
         System.out.println("Получили таблички с результатом");
 
+        writeToFile(format, output);
+    }
+
+    @SuppressWarnings("RegexpSinglelineJava")
+    private static void writeToFile(String format, String output) {
         final Path path = Path.of(".", "logsAnalysis." + (format.equals("markdown") ? "md" : "adoc"));
         try {
             Files.writeString(path, output);

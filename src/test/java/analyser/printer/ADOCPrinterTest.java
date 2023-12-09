@@ -1,5 +1,6 @@
 package analyser.printer;
 
+import analyser.OutputMaker;
 import analyser.reader.URIReader;
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -17,6 +18,6 @@ public class ADOCPrinterTest {
     @DisplayName("Тест вывода ADOC")
     void printTest1() {
         var stat = new URIReader().getStatistics(TEST_URI.toString(), FROM, TO);
-        assertThat(stat.getOutput("adoc").split("\n")[0]).isEqualTo(".Общая информация");
+        assertThat(new OutputMaker(stat).getOutput("adoc").split("\n")[0]).isEqualTo(".Общая информация");
     }
 }
