@@ -1,4 +1,4 @@
-package edu;
+package edu.hw7.task3;
 
 import java.util.Collections;
 import java.util.HashMap;

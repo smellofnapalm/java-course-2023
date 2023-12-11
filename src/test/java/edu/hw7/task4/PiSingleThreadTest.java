@@ -1,5 +1,6 @@
-package edu;
+package edu.hw7.task4;
 
+import edu.hw7.task4.PiSingleThread;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;

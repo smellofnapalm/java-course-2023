@@ -1,4 +1,4 @@
-package edu;
+package edu.hw7.task1;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

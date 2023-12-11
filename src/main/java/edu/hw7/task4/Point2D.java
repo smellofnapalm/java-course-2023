@@ -1,4 +1,4 @@
-package edu;
+package edu.hw7.task4;
 
 record Point2D(double x, double y) {
     private static final Point2D CENTER = new Point2D(0.5, 0.5);

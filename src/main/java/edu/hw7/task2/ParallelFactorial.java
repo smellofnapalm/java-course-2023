@@ -1,4 +1,4 @@
-package edu;
+package edu.hw7.task2;
 
 import java.math.BigInteger;
 import java.util.List;

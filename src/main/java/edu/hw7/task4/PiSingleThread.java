@@ -1,4 +1,4 @@
-package edu;
+package edu.hw7.task4;
 
 import java.security.SecureRandom;
 

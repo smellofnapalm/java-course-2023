@@ -1,11 +1,14 @@
-package edu;
+package edu.hw7.task3;
 
+import java.util.concurrent.atomic.AtomicReference;
+
+import edu.hw7.task3.Person;
+import edu.hw7.task3.PersonSet;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import java.util.concurrent.atomic.AtomicReference;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-public class PersonSetTest {
+public class LockPersonSetTest {
     final static Person p1 = new Person(1, "Михаил", "Земля", "42");
     final static Person p2 = new Person(2, "Григорий", "Москва", "8-800-555-35-35");
     final static Person p3 = new Person(3, "Мария", "Омск", ".");
@@ -13,8 +16,8 @@ public class PersonSetTest {
 
     @Test
     @DisplayName("Тест с записью в одном потоке и поиском в другом")
-    void personSetTest1() throws InterruptedException {
-        var personSet = new LockPersonSet();
+    void lockPersonSetTest1() throws InterruptedException {
+        var personSet = new PersonSet();
         AtomicReference<Person> res1 = new AtomicReference<>();
         AtomicReference<Person> res2 = new AtomicReference<>();
 
@@ -44,14 +47,13 @@ public class PersonSetTest {
         threadWriter.join();
         threadReader.join();
 
-        // Как мне реализовать тест на попытку совместного доступа? В этом тесте следующий assert иногда падает
         assertThat(res1.get()).isEqualTo(res2.get());
     }
 
     @Test
     @DisplayName("Такой же поиск, но теперь удаленного человека")
-    void personSetTest2() throws InterruptedException {
-        var personSet = new LockPersonSet();
+    void lockPersonSetTest2() throws InterruptedException {
+        var personSet = new PersonSet();
         AtomicReference<Person> res1 = new AtomicReference<>();
         AtomicReference<Person> res2 = new AtomicReference<>();
 
@@ -64,14 +66,12 @@ public class PersonSetTest {
         });
 
         Thread threadReader = new Thread(() -> {
-            synchronized (personSet) {
-                var res = personSet.findByAddress("Омск");
+            var res = personSet.findByAddress("Омск");
+            if (res != null) {
+                res1.set(res);
+                res = personSet.findById(3);
                 if (res != null) {
-                    res1.set(res);
-                    res = personSet.findById(3);
-                    if (res != null) {
-                        res2.set(res);
-                    }
+                    res2.set(res);
                 }
             }
         });

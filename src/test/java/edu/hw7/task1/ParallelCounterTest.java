@@ -1,6 +1,8 @@
-package edu;
+package edu.hw7.task1;
 
 import java.util.List;
+
+import edu.hw7.task1.ParallelCounter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;

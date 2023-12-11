@@ -1,5 +1,6 @@
-package edu;
+package edu.hw7.task2;
 
+import edu.hw7.task2.ParallelFactorial;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

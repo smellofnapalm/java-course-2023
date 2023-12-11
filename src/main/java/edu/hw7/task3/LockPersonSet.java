@@ -1,4 +1,4 @@
-package edu;
+package edu.hw7.task3;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,27 +43,35 @@ public class LockPersonSet implements PersonDatabase {
     public @Nullable Person findByName(String name) {
         var readLock = lock.readLock();
         readLock.lock();
-        var p = dict.values().stream().filter(person -> person.name().equals(name)).findAny().orElse(null);
-        readLock.unlock();
-        return p;
+        try {
+            return dict.values().stream().filter(person -> person.name().equals(name)).findAny().orElse(null);
+        } finally {
+            readLock.unlock();
+        }
     }
 
     @Override
     public @Nullable Person findByAddress(String address) {
         var readLock = lock.readLock();
         readLock.lock();
-        var p = dict.values().stream().filter(person -> person.address().equals(address)).findAny().orElse(null);
-        readLock.unlock();
-        return p;
+        try {
+            return dict.values().stream()
+                .filter(person -> person.address().equals(address)).findAny().orElse(null);
+        } finally {
+            readLock.unlock();
+        }
     }
 
     @Override
     public @Nullable Person findByPhone(String phone) {
         var readLock = lock.readLock();
         readLock.lock();
-        var p = dict.values().stream().filter(person -> person.phoneNumber().equals(phone)).findAny().orElse(null);
-        readLock.unlock();
-        return p;
+        try {
+            return dict.values().stream()
+                .filter(person -> person.phoneNumber().equals(phone)).findAny().orElse(null);
+        } finally {
+            readLock.unlock();
+        }
     }
 
     public @Nullable Person findById(int id) {
