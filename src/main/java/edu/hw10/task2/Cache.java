@@ -1,12 +1,12 @@
-package edu.hw10.task1;
+package edu.hw10.task2;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.PARAMETER, ElementType.RECORD_COMPONENT, ElementType.FIELD})
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Min {
-    int value() default Integer.MIN_VALUE;
+public @interface Cache {
+    boolean persist() default true;
 }
