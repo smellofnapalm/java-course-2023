@@ -15,4 +15,7 @@ public class HelloCreator {
             .getLoaded();
         return dynamicType;
     }
+
+    private HelloCreator() {
+    }
 }
