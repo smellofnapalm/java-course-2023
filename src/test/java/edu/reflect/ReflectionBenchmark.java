@@ -25,6 +25,8 @@ import static java.lang.invoke.MethodType.methodType;
 public class ReflectionBenchmark {
 
     public static void main(String[] args) throws RunnerException {
+        final TimeValue measurementTime = TimeValue.seconds(30);
+
         Options options = new OptionsBuilder()
             .include(ReflectionBenchmark.class.getSimpleName())
             .shouldFailOnError(true)
@@ -36,7 +38,7 @@ public class ReflectionBenchmark {
             .warmupIterations(1)
             .warmupTime(TimeValue.seconds(5))
             .measurementIterations(1)
-            .measurementTime(TimeValue.seconds(5))
+            .measurementTime(measurementTime)
             .build();
 
         new Runner(options).run();
@@ -46,7 +48,6 @@ public class ReflectionBenchmark {
     private Method method;
     private MethodHandle handle;
     private CallSite lambdaInvoker;
-
 
     @Setup
     public void setup()
