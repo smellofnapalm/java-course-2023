@@ -4,7 +4,7 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.implementation.FixedValue;
 import net.bytebuddy.matcher.ElementMatchers;
 
-public class HelloCreator {
+public final class HelloCreator {
     public static Class<?> createClass() {
         Class<?> dynamicType = new ByteBuddy()
             .subclass(Object.class)
