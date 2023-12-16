@@ -15,12 +15,19 @@ import java.util.concurrent.Executors;
 public final class RawSocketsServer {
 
     public RawSocketsServer() {
+        this.maxThreads = Runtime.getRuntime().availableProcessors();
+        this.service = Executors.newFixedThreadPool(maxThreads);
+    }
+
+    public RawSocketsServer(int threadCount) {
+        this.maxThreads = threadCount;
+        this.service = Executors.newFixedThreadPool(maxThreads);
     }
 
     private final int port = 8080;
     private volatile boolean flag = true;
-    private final int maxThreads = Runtime.getRuntime().availableProcessors();
-    final ExecutorService service = Executors.newFixedThreadPool(maxThreads);
+    private final int maxThreads;
+    final ExecutorService service;
 
     public void setFlag(boolean flag) {
         this.flag = flag;

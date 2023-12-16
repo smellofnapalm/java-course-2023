@@ -1,8 +1,10 @@
 package edu.hw8.task1;
 
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -30,7 +32,6 @@ public class RawSocketServerTest {
         });
 
         serverThread.start();
-        Thread.sleep(50);
         clientThread1.start();
         clientThread2.start();
         clientThread1.join();
@@ -38,5 +39,35 @@ public class RawSocketServerTest {
 
         assertThat(answers.contains("Чем ниже интеллект, тем громче оскорбления")).isTrue();
         assertThat(answers.contains("Не переходи на личности там, где их нет")).isTrue();
+    }
+
+    @Test
+    @DisplayName("Тест работы с 5 запросами, при наличии у сервера только 3 потоков")
+    void rawSocketTest2() {
+        final int threadCount = 3;
+        final int userCount = 5;
+        final RawSocketsServer server = new RawSocketsServer(threadCount);
+        Thread serverThread = new Thread(server::runServer);
+        List<String> answers = new CopyOnWriteArrayList<>(new String[userCount]);
+
+        var threadList = IntStream.range(0, userCount).mapToObj(i -> new Thread(() -> {
+            var client = new RemoteClient();
+            client.sendRequest("интеллект");
+            var ans = client.getAnswer();
+            answers.set(i, ans);
+        })).toList();
+
+        serverThread.start();
+        threadList.forEach(Thread::start);
+        threadList.forEach(t -> {
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        boolean allMatch = answers.stream().allMatch(s -> s.equals("Чем ниже интеллект, тем громче оскорбления"));
+        assertThat(allMatch).isTrue();
     }
 }
